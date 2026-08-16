@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>玟寅糖點二選一</title>
+  <style>
+    :root {
+      --bg-color: #fdfaf6;
+      --card-bg: #ffffff;
+      --primary: #d97736;
+      --primary-hover: #b85d24;
+      --accent: #fcd5b5;
+      --text: #333333;
+      --border: #eed9c4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 640px;
+      padding: 30px 24px;
+      text-align: center;
+    }
+
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .credit {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .progress-bar-container {
+      background-color: var(--accent);
+      border-radius: 10px;
+      height: 10px;
+      width: 100%;
+      margin: 16px 0 8px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      background-color: var(--primary);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .round-info {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .choice-btn {
+      background-color: #fff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 18px;
+      font-size: 1.15rem;
+      line-height: 1.5;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.02);
+    }
+
+    .choice-btn:hover {
+      background-color: #fffaf5;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(217, 119, 54, 0.15);
+    }
+
+    .choice-btn:active {
+      transform: translateY(0);
+    }
+
+    .vs-badge {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin: -6px 0;
+    }
+
+    .result-container {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .trophy {
+      font-size: 4rem;
+      margin-bottom: 12px;
+    }
+
+    .winner-title {
+      font-size: 1.4rem;
+      color: var(--primary);
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .winner-card {
+      background-color: #fffaf5;
+      border: 2px dashed var(--primary);
+      border-radius: 12px;
+      padding: 24px;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .restart-btn {
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .restart-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="title">🐶 玟寅糖點二選一 🦊</h1>
+      <p class="credit">@zhenwei0329</p>
+      
+      <div class="progress-bar-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="round-info" id="round-info">32強賽 (1/16)</div>
+    </div>
+
+    <!-- 遊戲選擇區 -->
+    <div id="game-view">
+      <div class="choices-grid">
+        <button class="choice-btn" id="option-a" onclick="selectWinner(0)"></button>
+        <div class="vs-badge">VS</div>
+        <button class="choice-btn" id="option-b" onclick="selectWinner(1)"></button>
+      </div>
+    </div>
+
+    <!-- 獲勝結果區 -->
+    <div class="result-container" id="result-view">
+      <div class="trophy">🏆</div>
+      <div class="winner-title">你心目中的第一名糖點</div>
+      <div class="winner-card" id="winner-text"></div>
+      <button class="restart-btn" onclick="initGame()">再玩一次</button>
+    </div>
+  </div>
+
+  <script>
+    const INITIAL_CANDIDATES = [
+      "🦊出道戰想跟🐶一間房",
+      "🐶勤奮每早起來欺負🦊",
+      "🦊全身是汗在🐶床上",
+      "🐶: 🦊的戒圍是 18 號",
+      "🐶讓🦊給自己塗護唇膏",
+      "🐶: 🦊的大腿一點也不弱",
+      "🦊叫不到車給🐶打電話",
+      "遊戲中丟下🦊，會打🐶的",
+      "🐶🦊大半夜跑去喝紅酒",
+      "🦊給🐶買了同款手機殼",
+      "昇玟尼不會撒嬌，\n但為了I.N哥 昇玟什麼都能做到",
+      "🦊老以後🐶也叫麵包寶寶",
+      "🐶:一起吃麥*？ 🦊:嗯",
+      "對昇玟來說，\n精寅是珍貴的弟弟",
+      "🐶不是衣服好看，而是你好看",
+      "🦊:🐶是最不像哥哥的隊友",
+      "🐶:出道後一次都沒丟下🦊",
+      "Code鬼屋🐶🦊兩人不同組，\n但總是黏在一起",
+      "🐶:🦊只挑蛋糕邊角吃像變態",
+      "去上聲樂課，上下課總是互等",
+      "🦊:現在哥沒法用身體折磨我",
+      "到新地點，\n總是一起出門逛街拍照",
+      "Jeongin反過來就是認證，\n是我認證的唯一一個弟弟",
+      "新年第一天一起看前輩演唱會",
+      "🐶:從第一次見面就喜歡你",
+      "嘴上嫌棄，後台總是互相拍照",
+      "🦊不愛貼貼，\n但任由🐶躺坐自己身上",
+      "要給喜歡的人貼貼紙，\n🐶貼在🦊身上",
+      "🐶:只要看著你的眼睛，\n內心就會變得幸福",
+      "🦊:最想和🐶再一次二孩房",
+      "🐶:🦊歪頭唱歌的樣子太可愛了，\n差點就撲上去了",
+      "🦊:我的就是我的，哥的也是我的"
+    ];
+
+    let currentRound = [];
+    let nextRound = [];
+    let matchIndex = 0;
+    let totalMatchesInRound = 0;
+
+    function getRoundName(count) {
+      if (count === 16) return "32強";
+      if (count === 8) return "16強";
+      if (count === 4) return "8強";
+      if (count === 2) return "準決賽";
+      if (count === 1) return "決賽";
+      return "";
+    }
+
+    function initGame() {
+      currentRound = [...INITIAL_CANDIDATES];
+      nextRound = [];
+      matchIndex = 0;
+      totalMatchesInRound = currentRound.length / 2;
+
+      document.getElementById('game-view').style.display = 'block';
+      document.getElementById('progress-container').style.display = 'block';
+      document.getElementById('result-view').style.display = 'none';
+
+      updateMatch();
+    }
+
+    function updateMatch() {
+      const optionA = currentRound[matchIndex * 2];
+      const optionB = currentRound[matchIndex * 2 + 1];
+
+      document.getElementById('option-a').innerText = optionA;
+      document.getElementById('option-b').innerText = optionB;
+
+      const roundName = getRoundName(totalMatchesInRound);
+      document.getElementById('round-info').innerText = `${roundName} (${matchIndex + 1}/${totalMatchesInRound})`;
+
+      const progress = ((matchIndex) / totalMatchesInRound) * 100;
+      document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function selectWinner(selectedIndex) {
+      const selected = currentRound[matchIndex * 2 + selectedIndex];
+      nextRound.push(selected);
+      matchIndex++;
+
+      if (matchIndex >= totalMatchesInRound) {
+        if (nextRound.length === 1) {
+          showResult(nextRound[0]);
+        } else {
+          currentRound = [...nextRound];
+          nextRound = [];
+          matchIndex = 0;
+          totalMatchesInRound = currentRound.length / 2;
+          updateMatch();
+        }
+      } else {
+        updateMatch();
+      }
+    }
+
+    function showResult(winner) {
+      document.getElementById('game-view').style.display = 'none';
+      document.getElementById('progress-container').style.display = 'none';
+      document.getElementById('round-info').innerText = "投票完成！";
+      document.getElementById('winner-text').innerText = winner;
+      document.getElementById('result-view').style.display = 'block';
+    }
+
+    window.onload = initGame;
+  </script>
+</body>
+</html>
