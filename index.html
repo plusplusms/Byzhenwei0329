@@ -3,313 +3,479 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>玟寅糖點二選一</title>
+  <title>小永遠世界盃</title>
+  <!-- 引入截圖套件 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --bg-color: #fdfaf6;
+      --bg: #f8f6f4;
       --card-bg: #ffffff;
-      --primary: #d97736;
-      --primary-hover: #b85d24;
-      --accent: #fcd5b5;
-      --text: #333333;
-      --border: #eed9c4;
+      --primary: #c96872;
+      --primary-hover: #b0535d;
+      --text: #222222;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
     }
-
     body {
-      background-color: var(--bg-color);
+      background-color: var(--bg);
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      padding: 16px 10px;
     }
-
     .container {
-      background-color: var(--card-bg);
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       width: 100%;
-      max-width: 640px;
-      padding: 30px 24px;
-      text-align: center;
-    }
-
-    .header {
-      margin-bottom: 24px;
-    }
-
-    .title {
-      font-size: 1.8rem;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-
-    .credit {
-      font-size: 0.9rem;
-      color: #888;
-    }
-
-    .progress-bar-container {
-      background-color: var(--accent);
-      border-radius: 10px;
-      height: 10px;
-      width: 100%;
-      margin: 16px 0 8px 0;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      background-color: var(--primary);
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
-    .round-info {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .choices-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .choice-btn {
-      background-color: #fff;
-      border: 2px solid var(--border);
+      max-width: 720px;
+      background: var(--card-bg);
       border-radius: 12px;
-      padding: 24px 18px;
-      font-size: 1.15rem;
-      line-height: 1.5;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      min-height: 110px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.02);
+      padding: 20px 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     }
-
-    .choice-btn:hover {
-      background-color: #fffaf5;
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(217, 119, 54, 0.15);
-    }
-
-    .choice-btn:active {
-      transform: translateY(0);
-    }
-
-    .vs-badge {
-      font-weight: 800;
-      color: var(--primary);
-      font-size: 1.1rem;
-      margin: -6px 0;
-    }
-
-    .result-container {
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .trophy {
-      font-size: 4rem;
-      margin-bottom: 12px;
-    }
-
-    .winner-title {
-      font-size: 1.4rem;
-      color: var(--primary);
-      font-weight: bold;
+    .game-header {
+      text-align: center;
       margin-bottom: 16px;
     }
-
-    .winner-card {
-      background-color: #fffaf5;
-      border: 2px dashed var(--primary);
-      border-radius: 12px;
-      padding: 24px;
-      font-size: 1.25rem;
-      line-height: 1.6;
-      font-weight: 600;
-      margin-bottom: 24px;
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 4px;
     }
-
-    .restart-btn {
-      background-color: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 28px;
-      font-size: 1rem;
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #666;
+      font-size: 0.95rem;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 7px;
+      background: #eee;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+    .battle-box {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 220px;
+    }
+    .option-card {
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.15rem;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      min-height: 160px;
+      transition: all 0.2s ease;
+      user-select: none;
+      line-height: 1.4;
+    }
+    .option-card:hover, .option-card:active {
+      border-color: var(--primary);
+      background: #fffafa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(201, 104, 114, 0.18);
+    }
+    .vs-badge {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--primary);
+      padding: 6px 10px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #ddd;
     }
 
-    .restart-btn:hover {
-      background-color: var(--primary-hover);
+    /* 結果截圖卡片 */
+    .result-section {
+      display: none;
     }
+    #capture-card {
+      background: #ffffff;
+      padding: 24px 16px;
+      border-radius: 8px;
+      color: #000;
+    }
+    .card-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 12px;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    .author-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .author-line {
+      border: none;
+      border-bottom: 2px solid #000;
+      outline: none;
+      font-size: 1.15rem;
+      font-weight: bold;
+      width: 160px;
+      padding: 2px 4px;
+      background: transparent;
+    }
+    .watermark {
+      font-size: 0.95rem;
+      color: #444;
+      font-weight: 500;
+    }
+    .bracket-table-wrap {
+      width: 100%;
+      border: 2px solid #000;
+      background: #fff;
+      overflow-x: auto;
+    }
+    .bracket-table {
+      width: 100%;
+      min-width: 580px;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      color: #000;
+      table-layout: fixed;
+    }
+    .table-title {
+      border-bottom: 2px solid #000;
+      text-align: center;
+      padding: 6px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      background: #fff;
+      letter-spacing: 2px;
+    }
+    .bracket-table td {
+      border: 1px solid #000;
+      padding: 4px 3px;
+      text-align: center;
+      word-break: break-word;
+      line-height: 1.25;
+      font-weight: 500;
+    }
+    .col-32 { width: 33%; }
+    .col-16 { width: 21%; }
+    .col-8  { width: 18%; }
+    .col-4  { width: 15%; }
+    .col-2  { width: 13%; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+    .winner-footer {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    .trophy-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .winner-line-wrap {
+      flex: 1;
+      border-bottom: 2px solid #000;
+      padding-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .winner-highlight-text {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .action-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .action-btn.secondary {
+      background: #666;
+    }
+    .action-btn:hover {
+      opacity: 0.9;
+    }
+    @media (max-width: 600px) {
+      .battle-box {
+        grid-template-columns: 1fr;
+      }
+      .vs-badge {
+        display: none;
+      }
+      .option-card {
+        min-height: 95px;
+      }
+      .author-line {
+        width: 120px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="header">
-      <h1 class="title">🐶 玟寅糖點二選一 🦊</h1>
-      <p class="credit">@zhenwei0329</p>
-      
-      <div class="progress-bar-container" id="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-      <div class="round-info" id="round-info">32強賽 (1/16)</div>
-    </div>
-
-    <!-- 遊戲選擇區 -->
+    <!-- 遊戲區 -->
     <div id="game-view">
-      <div class="choices-grid">
-        <button class="choice-btn" id="option-a" onclick="selectWinner(0)"></button>
+      <div class="game-header">
+        <div class="game-title">小永遠世界盃</div>
+        <div style="font-size: 0.85rem; color: #777;">點選你心中的最佳選項！</div>
+      </div>
+      <div class="status-bar">
+        <span id="round-name">32 強賽</span>
+        <span id="match-progress">1 / 16</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progress-fill" class="progress-bar-fill"></div>
+      </div>
+      <div class="battle-box">
+        <div id="option-a" class="option-card" onclick="chooseWinner(0)"></div>
         <div class="vs-badge">VS</div>
-        <button class="choice-btn" id="option-b" onclick="selectWinner(1)"></button>
+        <div id="option-b" class="option-card" onclick="chooseWinner(1)"></div>
       </div>
     </div>
 
-    <!-- 獲勝結果區 -->
-    <div class="result-container" id="result-view">
-      <div class="trophy">🏆</div>
-      <div class="winner-title">你心目中的第一名糖點</div>
-      <div class="winner-card" id="winner-text"></div>
-      <button class="restart-btn" onclick="initGame()">再玩一次</button>
+    <!-- 結果與歷程區 -->
+    <div id="result-view" class="result-section">
+      <div id="capture-card">
+        <div class="card-top-bar">
+          <div class="author-input-wrap">
+            <span>填表人：</span>
+            <input type="text" id="user-name-input" class="author-line" placeholder="點此輸入名字" />
+          </div>
+          <div class="watermark">@Byzhenwei0329</div>
+        </div>
+
+        <div class="bracket-table-wrap">
+          <table class="bracket-table" id="bracket-table">
+            <thead>
+              <tr>
+                <th colspan="5" class="table-title">小永遠世界盃</th>
+              </tr>
+            </thead>
+            <tbody id="bracket-body"></tbody>
+          </table>
+        </div>
+
+        <div class="winner-footer">
+          <span class="trophy-icon">🏆</span>
+          <span style="font-size: 1.4rem;">:</span>
+          <div class="winner-line-wrap">
+            <span id="winner-text" class="winner-highlight-text"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="action-btn" onclick="saveAsImage()">📸 下載完整結果圖</button>
+        <button class="action-btn" onclick="copyImageToClipboard()">📋 複製圖片</button>
+        <button class="action-btn secondary" onclick="restartGame()">🔄 重新測驗</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const INITIAL_CANDIDATES = [
-      "🦊出道戰想跟🐶一間房",
-      "🐶勤奮每早起來欺負🦊",
-      "🦊全身是汗在🐶床上",
-      "🐶: 🦊的戒圍是 18 號",
-      "🐶讓🦊給自己塗護唇膏",
-      "🐶: 🦊的大腿一點也不弱",
-      "🦊叫不到車給🐶打電話",
-      "遊戲中丟下🦊，會打🐶的",
-      "🐶🦊大半夜跑去喝紅酒",
-      "🦊給🐶買了同款手機殼",
-      "昇玟尼不會撒嬌，\n但為了I.N哥 昇玟什麼都能做到",
-      "🦊老以後🐶也叫麵包寶寶",
-      "🐶:一起吃麥*？ 🦊:嗯",
-      "對昇玟來說，\n精寅是珍貴的弟弟",
-      "🐶不是衣服好看，而是你好看",
-      "🦊:🐶是最不像哥哥的隊友",
-      "🐶:出道後一次都沒丟下🦊",
-      "Code鬼屋🐶🦊兩人不同組，\n但總是黏在一起",
-      "🐶:🦊只挑蛋糕邊角吃像變態",
-      "去上聲樂課，上下課總是互等",
-      "🦊:現在哥沒法用身體折磨我",
-      "到新地點，\n總是一起出門逛街拍照",
-      "Jeongin反過來就是認證，\n是我認證的唯一一個弟弟",
-      "新年第一天一起看前輩演唱會",
-      "🐶:從第一次見面就喜歡你",
-      "嘴上嫌棄，後台總是互相拍照",
-      "🦊不愛貼貼，\n但任由🐶躺坐自己身上",
-      "要給喜歡的人貼貼紙，\n🐶貼在🦊身上",
-      "🐶:只要看著你的眼睛，\n內心就會變得幸福",
-      "🦊:最想和🐶再一次二孩房",
-      "🐶:🦊歪頭唱歌的樣子太可愛了，\n差點就撲上去了",
-      "🦊:我的就是我的，哥的也是我的"
+    // 這裡放你的 32 個選項（可自行替換修改）
+    const originalItems = [
+      "出道戰一牽定情", "哥是我的靈魂伴侶", "橡子理論", "你對我的喜歡是那種喜歡嗎",
+      "我喜歡普通", "不是老公因為還沒蓋章", "我和哥是一體的", "李糯哥是只屬於我一個人的",
+      "養在魚缸裡的金魚", "別墅理論", "知城是飛蛾", "和我在一起的時候最幸福吧",
+      "我們韓尼更漂亮", "1月1日D社情侶", "大寶貝和小寶貝", "他和我吃飯不吃辣",
+      "want so bad", "李科長韓代理", "洗完澡跳電臀舞", "親後頸",
+      "我們其實可以不做戀人", "章魚告白", "你也是男朋友", "抱抱只有韓尼沒關係",
+      "誤闖隊友直播", "到底吃了什麼肉", "我們就是命運", "要拍新的結婚照",
+      "情侶手鍊", "因為天氣剛剛好", "電梯調情", "直播換飲料"
     ];
 
-    let currentRound = [];
-    let nextRound = [];
-    let matchIndex = 0;
-    let totalMatchesInRound = 0;
-
-    function getRoundName(count) {
-      if (count === 16) return "32強";
-      if (count === 8) return "16強";
-      if (count === 4) return "8強";
-      if (count === 2) return "準決賽";
-      if (count === 1) return "決賽";
-      return "";
-    }
+    let currentRoundCandidates = [];
+    let nextRoundCandidates = [];
+    let currentMatchIndex = 0;
+    let historyTree = [];
 
     function initGame() {
-      currentRound = [...INITIAL_CANDIDATES];
-      nextRound = [];
-      matchIndex = 0;
-      totalMatchesInRound = currentRound.length / 2;
+      currentRoundCandidates = [...originalItems];
+      nextRoundCandidates = [];
+      currentMatchIndex = 0;
+      historyTree = [[...originalItems], [], [], [], [], []];
 
-      document.getElementById('game-view').style.display = 'block';
-      document.getElementById('progress-container').style.display = 'block';
-      document.getElementById('result-view').style.display = 'none';
-
-      updateMatch();
+      document.getElementById("game-view").style.display = "block";
+      document.getElementById("result-view").style.display = "none";
+      renderMatch();
     }
 
-    function updateMatch() {
-      const optionA = currentRound[matchIndex * 2];
-      const optionB = currentRound[matchIndex * 2 + 1];
-
-      document.getElementById('option-a').innerText = optionA;
-      document.getElementById('option-b').innerText = optionB;
-
-      const roundName = getRoundName(totalMatchesInRound);
-      document.getElementById('round-info').innerText = `${roundName} (${matchIndex + 1}/${totalMatchesInRound})`;
-
-      const progress = ((matchIndex) / totalMatchesInRound) * 100;
-      document.getElementById('progress-bar').style.width = `${progress}%`;
+    function getRoundTitle(count) {
+      if (count === 32) return "32 強賽";
+      if (count === 16) return "16 強賽";
+      if (count === 8) return "8 強半準決賽";
+      if (count === 4) return "4 強準決賽";
+      if (count === 2) return "最終決賽";
+      return "比賽進行中";
     }
 
-    function selectWinner(selectedIndex) {
-      const selected = currentRound[matchIndex * 2 + selectedIndex];
-      nextRound.push(selected);
-      matchIndex++;
+    function renderMatch() {
+      const totalMatches = currentRoundCandidates.length / 2;
+      const currentMatch = currentMatchIndex + 1;
+      
+      document.getElementById("round-name").innerText = getRoundTitle(currentRoundCandidates.length);
+      document.getElementById("match-progress").innerText = `${currentMatch} / ${totalMatches}`;
+      
+      const percent = ((currentMatch - 1) / totalMatches) * 100;
+      document.getElementById("progress-fill").style.width = `${percent}%`;
 
-      if (matchIndex >= totalMatchesInRound) {
-        if (nextRound.length === 1) {
-          showResult(nextRound[0]);
-        } else {
-          currentRound = [...nextRound];
-          nextRound = [];
-          matchIndex = 0;
-          totalMatchesInRound = currentRound.length / 2;
-          updateMatch();
+      document.getElementById("option-a").innerText = currentRoundCandidates[currentMatchIndex * 2];
+      document.getElementById("option-b").innerText = currentRoundCandidates[currentMatchIndex * 2 + 1];
+    }
+
+    function chooseWinner(selectedIndex) {
+      const winner = currentRoundCandidates[currentMatchIndex * 2 + selectedIndex];
+      nextRoundCandidates.push(winner);
+      
+      const currentRoundLevel = Math.log2(32 / currentRoundCandidates.length) + 1;
+      historyTree[currentRoundLevel].push(winner);
+
+      currentMatchIndex++;
+
+      if (currentMatchIndex * 2 >= currentRoundCandidates.length) {
+        if (nextRoundCandidates.length === 1) {
+          showResults(nextRoundCandidates[0]);
+          return;
         }
-      } else {
-        updateMatch();
+        currentRoundCandidates = [...nextRoundCandidates];
+        nextRoundCandidates = [];
+        currentMatchIndex = 0;
+      }
+
+      renderMatch();
+    }
+
+    function showResults(winner) {
+      document.getElementById("game-view").style.display = "none";
+      document.getElementById("result-view").style.display = "block";
+      document.getElementById("winner-text").innerText = winner;
+      buildBracketTable();
+    }
+
+    function buildBracketTable() {
+      const tbody = document.getElementById("bracket-body");
+      tbody.innerHTML = "";
+
+      for (let i = 0; i < 32; i++) {
+        const tr = document.createElement("tr");
+
+        const td32 = document.createElement("td");
+        td32.className = "col-32";
+        td32.innerText = historyTree[0][i];
+        tr.appendChild(td32);
+
+        if (i % 2 === 0) {
+          const td16 = document.createElement("td");
+          td16.className = "col-16";
+          td16.rowSpan = 2;
+          td16.innerText = historyTree[1][i / 2] || "";
+          tr.appendChild(td16);
+        }
+
+        if (i % 4 === 0) {
+          const td8 = document.createElement("td");
+          td8.className = "col-8";
+          td8.rowSpan = 4;
+          td8.innerText = historyTree[2][i / 4] || "";
+          tr.appendChild(td8);
+        }
+
+        if (i % 8 === 0) {
+          const td4 = document.createElement("td");
+          td4.className = "col-4";
+          td4.rowSpan = 8;
+          td4.innerText = historyTree[3][i / 8] || "";
+          tr.appendChild(td4);
+        }
+
+        if (i % 16 === 0) {
+          const tdFinal = document.createElement("td");
+          tdFinal.className = "col-2";
+          tdFinal.rowSpan = 16;
+          tdFinal.innerText = historyTree[4][i / 16] || "";
+          tr.appendChild(tdFinal);
+        }
+
+        tbody.appendChild(tr);
       }
     }
 
-    function showResult(winner) {
-      document.getElementById('game-view').style.display = 'none';
-      document.getElementById('progress-container').style.display = 'none';
-      document.getElementById('round-info').innerText = "投票完成！";
-      document.getElementById('winner-text').innerText = winner;
-      document.getElementById('result-view').style.display = 'block';
+    function saveAsImage() {
+      const card = document.getElementById("capture-card");
+      html2canvas(card, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+        const link = document.createElement("a");
+        const userName = document.getElementById("user-name-input").value.trim();
+        link.download = userName ? `小永遠世界盃_${userName}.png` : "小永遠世界盃_結果.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
     }
 
-    window.onload = initGame;
+    function copyImageToClipboard() {
+      const card = document.getElementById("capture-card");
+      html2canvas(card, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+        canvas.toBlob(blob => {
+          if (navigator.clipboard && navigator.clipboard.write) {
+            navigator.clipboard.write([
+              new ClipboardItem({ "image/png": blob })
+            ]).then(() => {
+              alert("已將完整結果圖複製到剪貼簿，可直接貼上分享！");
+            }).catch(() => {
+              alert("複製失敗，請點選「下載完整結果圖」。");
+            });
+          } else {
+            alert("目前瀏覽器不支援直接複製，請直接點選「下載完整結果圖」。");
+          }
+        });
+      });
+    }
+
+    function restartGame() {
+      document.getElementById("user-name-input").value = "";
+      initGame();
+    }
+
+    initGame();
   </script>
 </body>
 </html>
